@@ -23,4 +23,5 @@ dependencies {
     compile files('libs/TencentLocationSDK_v4.3.0_r196568_151014_1433.jar')
     compile files('libs/TencentMapSDK_Raster_v1.1.2.15850.jar')
     compile files('libs/TencentPanoramaSDK_v.1.2.0_16324.jar')
+    compile files('libs/bmob_v3.2.0.jar')
 }

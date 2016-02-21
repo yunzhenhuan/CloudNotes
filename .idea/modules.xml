@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CloudNotes.iml" filepath="$PROJECT_DIR$/CloudNotes.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Cloudnotes/Cloudnotes.iml" filepath="$PROJECT_DIR$/Cloudnotes/Cloudnotes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CloudNotes/Cloudnotes.iml" filepath="$PROJECT_DIR$/CloudNotes/Cloudnotes.iml" />
     </modules>
   </component>
 </project>
