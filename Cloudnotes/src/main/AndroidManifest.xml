@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tencent.streetsdkdemo"
+    package="com.nucyzh"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -32,7 +32,7 @@
             android:name="TencentMapSDK"
             android:value="4XQBZ-JYAKD-IWC4B-PNS43-BLDVK-QPBUH"/>
         <activity
-            android:name="com.nuc.yzh.cloudnotes.streetsdkdemo.MainActivity"
+            android:name="com.nucyzh.streetsdk.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,25 +40,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.nuc.yzh.cloudnotes.streetsdkdemo.PanoramaActivity" android:label="@string/demo_lable_pano_activity"></activity>
-        <activity android:name="com.nuc.yzh.cloudnotes.streetsdkdemo.PanoramaFragActivity" android:label="@string/demo_lable_pano_fragment"></activity>
+        <activity android:name="com.nucyzh.streetsdk.PanoramaActivity" android:label="@string/demo_lable_pano_activity"></activity>
+        <activity android:name="com.nucyzh.streetsdk.PanoramaFragActivity" android:label="@string/demo_lable_pano_fragment"></activity>
         <activity
-            android:name="com.nuc.yzh.cloudnotes.notes.NotesActivity"
+            android:name="com.nucyzh.notes.NotesActivity"
             android:configChanges="keyboardHidden|orientation">
 
         </activity>
         <activity
-            android:name="com.nuc.yzh.cloudnotes.notes.AtyEditNote"
+            android:name="com.nucyzh.notes.AtyEditNote"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
         <activity
-            android:name="com.nuc.yzh.cloudnotes.notes.AtyPhotoViewer"
+            android:name="com.nucyzh.notes.AtyPhotoViewer"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
         <activity
-            android:name="com.nuc.yzh.cloudnotes.notes.AtyVideoViewer"
+            android:name="com.nucyzh.notes.AtyVideoViewer"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
+        <activity android:name="com.nucyzh.realtimedata.ChatActivity"></activity>
     </application>
 
 </manifest>
