@@ -29,16 +29,16 @@ public class NotesDB extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME_NOTES + "(" + COLUMN_NAME_ID
-                + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME_NOTE_NAME
-                + " TEXT NOT NULL DEFAULT \"\"," + COLUMN_NAME_NOTE_CONTENT
-                + " TEXT NOT NULL DEFAULT \"\"," + COLUMN_NAME_NOTE_DATE
-                + " TEXT NOT NULL DEFAULT \"\"" + ")");
-        db.execSQL("CREATE TABLE " + TABLE_NAME_MEDIA + "(" + COLUMN_NAME_ID
-                + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+        db.execSQL("CREATE TABLE " + TABLE_NAME_NOTES + "("
+                + COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_NAME_NOTE_NAME + " TEXT NOT NULL DEFAULT \"\","
+                + COLUMN_NAME_NOTE_CONTENT + " TEXT NOT NULL DEFAULT \"\","
+                + COLUMN_NAME_NOTE_DATE + " TEXT NOT NULL DEFAULT \"\"" + ")");
+        db.execSQL("CREATE TABLE " + TABLE_NAME_MEDIA + "("
+                + COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME_MEDIA_PATH + " TEXT NOT NULL DEFAULT \"\","
-                + COLUMN_NAME_MEDIA_OWNER_NOTE_ID
-                + " INTEGER NOT NULL DEFAULT 0" + ")");
+                + COLUMN_NAME_MEDIA_OWNER_NOTE_ID + " INTEGER NOT NULL DEFAULT 0"
+                + ")");
     }
 
     /**

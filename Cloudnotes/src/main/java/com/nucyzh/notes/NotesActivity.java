@@ -1,14 +1,18 @@
 package com.nucyzh.notes;
 
 import android.app.Activity;
-import android.app.ListActivity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.nucyzh.R;
 import com.nucyzh.notes.db.NotesDB;
@@ -17,13 +21,16 @@ import com.nucyzh.notes.db.NotesDB;
 /**
  * Author:XiYang on 2016/2/18.
  * Email:765849854@qq.com
- *
- * 继承ListActivity的Activity，呈现已经存在的日志和添加日志按钮
+ * <p/>
+ * 呈现已经存在的日志和添加日志按钮
  */
-public class NotesActivity extends ListActivity {
+public class NotesActivity extends Activity {
     private SimpleCursorAdapter adapter = null;
     private NotesDB db;
     private SQLiteDatabase dbRead;
+    private ListView noteList;
+
+    TextView textView;
 
     public static final int REQUEST_CODE_ADD_NOTE = 1;
     public static final int REQUEST_CODE_EDIT_NOTE = 2;
@@ -46,8 +53,10 @@ public class NotesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.notes_desktop);
+        noteList = (ListView) findViewById(R.id.notelist2);
+        textView = (TextView) findViewById(R.id.text);
+        textView.setText("Notes");
         // 操作数据库
         db = new NotesDB(this);
         dbRead = db.getReadableDatabase();
@@ -58,44 +67,82 @@ public class NotesActivity extends ListActivity {
                 new String[]{NotesDB.COLUMN_NAME_NOTE_NAME,
                         NotesDB.COLUMN_NAME_NOTE_DATE}, new int[]{
                 R.id.tvName, R.id.tvDate});
-        setListAdapter(adapter);
+        noteList.setAdapter(adapter);
         refreshNotesListView();
         findViewById(R.id.btnAddNote).setOnClickListener(btnAddNote_clickHandler);
+
+        //item点击事件
+        noteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * 笔记列表中的笔记条目被点击时被调用，打开编辑笔记页面，同事传入当前笔记的信息
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // 获取当前笔记条目的Cursor对象
+                Cursor c = adapter.getCursor();
+                c.moveToPosition(position);
+                System.out.println("点击事件");
+
+                // 显式Intent开启编辑笔记页面
+                Intent intent = new Intent(NotesActivity.this, AtyEditNote.class);
+
+                // 传入笔记id，name，content
+                intent.putExtra(AtyEditNote.EXTRA_NOTE_ID,
+                        c.getInt(c.getColumnIndex(NotesDB.COLUMN_NAME_ID)));
+                intent.putExtra(AtyEditNote.EXTRA_NOTE_NAME,
+                        c.getString(c.getColumnIndex(NotesDB.COLUMN_NAME_NOTE_NAME)));
+                intent.putExtra(AtyEditNote.EXTRA_NOTE_CONTENT,
+                        c.getString(c.getColumnIndex(NotesDB.COLUMN_NAME_NOTE_CONTENT)));
+                // 有返回的开启Activity
+                startActivityForResult(intent, REQUEST_CODE_EDIT_NOTE);
+            }
+        });
+        //item长按事件
+        noteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("长按事件");
+                final Object noteID = id;
+                //添加是否确认删除警告框
+                Dialog dialog = new AlertDialog.Builder(NotesActivity.this)
+                        .setTitle("删除信息").setMessage("您确定要删除吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            /**
+                             *确定点击事件响应
+                             */
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+
+                                NotesDB dbHelper = new NotesDB(NotesActivity.this);
+                                //根据id删除
+                                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                                db.execSQL("delete from notes where _id=? ", new Object[]{noteID});
+                                db.close();
+                                onCreate(null);
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            /**
+                             *取消点击事件响应
+                             */
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();//关闭窗口
+                            }
+                        }).create();
+                dialog.show();//显示窗口
+                refreshNotesListView();
+                return true;
+            }
+        });
     }
-
-    /**
-     * 复写方法，笔记列表中的笔记条目被点击时被调用，打开编辑笔记页面，同事传入当前笔记的信息
-     */
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-
-        // 获取当前笔记条目的Cursor对象
-        Cursor c = adapter.getCursor();
-        c.moveToPosition(position);
-
-        // 显式Intent开启编辑笔记页面
-        Intent i = new Intent(NotesActivity.this, AtyEditNote.class);
-
-        // 传入笔记id，name，content
-        i.putExtra(AtyEditNote.EXTRA_NOTE_ID,
-                c.getInt(c.getColumnIndex(NotesDB.COLUMN_NAME_ID)));
-        i.putExtra(AtyEditNote.EXTRA_NOTE_NAME,
-                c.getString(c.getColumnIndex(NotesDB.COLUMN_NAME_NOTE_NAME)));
-        i.putExtra(AtyEditNote.EXTRA_NOTE_CONTENT,
-                c.getString(c.getColumnIndex(NotesDB.COLUMN_NAME_NOTE_CONTENT)));
-
-        // 有返回的开启Activity
-        startActivityForResult(i, REQUEST_CODE_EDIT_NOTE);
-
-        super.onListItemClick(l, v, position, id);
-    }
-
-
 
     /**
      * Called when an activity you launched exits, giving you the requestCode
      * you started it with 当被开启的Activity存在并返回结果时调用的方法
-     *
+     * <p/>
      * 当从编辑笔记页面返回时调用，刷新笔记列表
      */
     @Override

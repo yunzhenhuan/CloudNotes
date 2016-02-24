@@ -1,4 +1,4 @@
-package com.nucyzh.realtimedata;
+package com.nucyzh.online_chat;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -30,7 +30,6 @@ import cn.bmob.v3.listener.ValueEventListener;
  * Email:765849854@qq.com
  */
 public class ChatActivity extends Activity implements View.OnClickListener {
-
     ListView lv_data;
     Button btn_send;
     EditText et_name, et_content;
@@ -42,10 +41,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
-
+        setContentView(R.layout.online_chat);
         init();
-
         et_name = (EditText) findViewById(R.id.et_name);
         et_content = (EditText) findViewById(R.id.et_content);
         lv_data = (ListView) findViewById(R.id.lv_data);

@@ -1,4 +1,4 @@
-package com.nucyzh.realtimedata;
+package com.nucyzh.online_chat;
 
 import cn.bmob.v3.BmobObject;
 

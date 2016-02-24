@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.nucyzh.R;
-import com.nucyzh.flipperactivity.activity_test.Main;
 
 
 public class ShakeActivity extends Activity {
@@ -101,7 +100,7 @@ public class ShakeActivity extends Activity {
 			}
 		}, 2000);
 		Intent intent = new Intent();
-		intent.setClass(ShakeActivity.this, Main.class);
+		//intent.setClass(ShakeActivity.this, Main.class);
 		ShakeActivity.this.startActivity(intent);
 		// 播放音频，可以对左右音量分别设置，还可以设置优先级，循环次数以及速率
 		// 速率最低0.5最高为2，1代表 正常速度

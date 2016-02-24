@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.nucyzh.R;
 import com.nucyzh.login_third.LoginActivity;
-import com.nucyzh.realtimedata.ChatActivity;
+import com.nucyzh.online_chat.ChatActivity;
 import com.nucyzh.streetsdk.PanoramaActivity;
 import com.nucyzh.streetsdk.PanoramaFragActivity;
 

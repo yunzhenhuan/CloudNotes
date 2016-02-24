@@ -141,7 +141,6 @@ public class AtyEditNote extends ListActivity {
                         .getColumnIndex(NotesDB.COLUMN_NAME_MEDIA_PATH)), c
                         .getInt(c.getColumnIndex(NotesDB.COLUMN_NAME_ID))));
             }
-
             /**
              * Notifies the attached observers that the underlying data has been
              * changed and any View reflecting the data set should refresh
@@ -194,7 +193,6 @@ public class AtyEditNote extends ListActivity {
             default:
                 break;
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

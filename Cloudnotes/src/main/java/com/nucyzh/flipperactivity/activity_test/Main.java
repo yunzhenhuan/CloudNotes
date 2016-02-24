@@ -1,12 +1,13 @@
 package com.nucyzh.flipperactivity.activity_test;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 
 import com.nucyzh.flipperactivity.expandgroup.About;
-import com.nucyzh.flipperactivity.expandgroup.Notes;
+
 import com.nucyzh.flipperactivity.expandgroup.Text1_2;
 import com.nucyzh.flipperactivity.expandgroup.Text1_3;
 import com.nucyzh.flipperactivity.expandgroup.Text2_1;
@@ -18,6 +19,7 @@ import com.nucyzh.flipperactivity.expandgroup.Text3_3;
 import com.nucyzh.flipperactivity.expandgroup.Text4_1;
 import com.nucyzh.flipperactivity.expandgroup.Text4_2;
 import com.nucyzh.flipperactivity.expandgroup.Text4_3;
+import com.nucyzh.notes.NotesActivity;
 
 
 public class Main extends Activity implements FlipperLayout.OnOpenListener {
@@ -27,7 +29,7 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
     private FlipperLayout mRoot;
     private Desktop mDesktop;
     private About mAbout;
-    private Notes text1;
+
     private Text1_2 text2;
     private Text1_3 text3;
     private Text2_1 text4;
@@ -45,7 +47,7 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mRoot = new FlipperLayout(Main.this);
         mDesktop = new Desktop(Main.this);
-        text1 = new Notes(this);
+
         text2 = new Text1_2(this);
         text3 = new Text1_3(this);
         text4 = new Text2_1(this);
@@ -69,7 +71,9 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
                 System.out.println("" + args);
                 switch (args) {
                     case 1:
-                        mRoot.close(text1.getView());
+                        //mRoot.close(text1.getView());
+                        Intent intent = new Intent(Main.this, NotesActivity.class);
+                        startActivity(intent);
                         break;
                     case 2:
                         mRoot.close(text2.getView());
@@ -117,6 +121,4 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
             mRoot.open();
         }
     }
-
-
 }
