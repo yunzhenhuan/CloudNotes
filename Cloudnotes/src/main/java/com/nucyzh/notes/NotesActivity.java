@@ -59,11 +59,8 @@ public class NotesActivity extends ListActivity {
                         NotesDB.COLUMN_NAME_NOTE_DATE}, new int[]{
                 R.id.tvName, R.id.tvDate});
         setListAdapter(adapter);
-
         refreshNotesListView();
-
-        findViewById(R.id.btnAddNote).setOnClickListener(
-                btnAddNote_clickHandler);
+        findViewById(R.id.btnAddNote).setOnClickListener(btnAddNote_clickHandler);
     }
 
     /**
@@ -92,6 +89,8 @@ public class NotesActivity extends ListActivity {
 
         super.onListItemClick(l, v, position, id);
     }
+
+
 
     /**
      * Called when an activity you launched exits, giving you the requestCode

@@ -80,9 +80,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     messages.add(new Chat(data.optString("name"), data.optString("content")));
                     myAdapter.notifyDataSetChanged();
                 }
-
             }
-
             @Override
             public void onConnectCompleted() {
                 // TODO Auto-generated method stub
@@ -94,7 +92,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void sendMsg(String name, String msg) {
-        Chat chat = new Chat(name, msg);
+        Chat chat = new Chat("昵称:"+name, "消息:"+msg);
         chat.save(this, new SaveListener() {
 
             @Override
