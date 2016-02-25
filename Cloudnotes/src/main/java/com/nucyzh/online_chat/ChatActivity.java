@@ -29,7 +29,7 @@ import cn.bmob.v3.listener.ValueEventListener;
  * Author:XiYang on 2016/2/20.
  * Email:765849854@qq.com
  */
-public class ChatActivity extends Activity implements View.OnClickListener {
+public class ChatActivity extends Activity  {
     ListView lv_data;
     Button btn_send;
     EditText et_name, et_content;
@@ -46,24 +46,27 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         et_name = (EditText) findViewById(R.id.et_name);
         et_content = (EditText) findViewById(R.id.et_content);
         lv_data = (ListView) findViewById(R.id.lv_data);
+        btn_send = (Button) findViewById(R.id.btn_send);
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = et_name.getText().toString();
+                String content = et_content.getText().toString();
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(content)) {
+                    Toast.makeText(ChatActivity.this, "用户名和内容不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    sendMsg(name, content);
+                }
+            }
+        });
 
         myAdapter = new MyAdapter();
         lv_data.setAdapter(myAdapter);
 
     }
 
-    @Override
-    public void onClick(View v) {
-        // TODO Auto-generated method stub
-        String name = et_name.getText().toString();
-        String content = et_content.getText().toString();
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(content)) {
-            Toast.makeText(this, "用户名和内容不能为空", Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            sendMsg(name, content);
-        }
-    }
+
 
     private void init() {
         Bmob.initialize(this, "c238263866c0f587531c8c406cc47251");
@@ -88,6 +91,11 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    /**
+     * 发送消息
+     * @param name
+     * @param msg
+     */
     private void sendMsg(String name, String msg) {
         Chat chat = new Chat("昵称:"+name, "消息:"+msg);
         chat.save(this, new SaveListener() {
@@ -130,23 +138,19 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             // TODO Auto-generated method stub
             if (convertView == null) {
-                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_item, null);
+                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.notes_desktop, null);
                 holder = new ViewHolder();
-
                 holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
                 holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
                 holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
-
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-
             Chat chat = messages.get(position);
             holder.tv_name.setText(chat.getName());
             holder.tv_content.setText(chat.getContent());
             holder.tv_time.setText(chat.getCreatedAt());
-
             return convertView;
         }
 

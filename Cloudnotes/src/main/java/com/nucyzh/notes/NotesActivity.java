@@ -10,11 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.nucyzh.R;
+import com.nucyzh.connect_net.NotesSync;
 import com.nucyzh.notes.db.NotesDB;
 
 
@@ -56,7 +58,7 @@ public class NotesActivity extends Activity {
         setContentView(R.layout.notes_desktop);
         noteList = (ListView) findViewById(R.id.notelist2);
         textView = (TextView) findViewById(R.id.text);
-        textView.setText("Notes");
+        textView.setText("Notes");  //设置标题
         // 操作数据库
         db = new NotesDB(this);
         dbRead = db.getReadableDatabase();
@@ -69,6 +71,8 @@ public class NotesActivity extends Activity {
                 R.id.tvName, R.id.tvDate});
         noteList.setAdapter(adapter);
         refreshNotesListView();
+        Button btnUpload = (Button)findViewById(R.id.btnUpload);
+        Button btnDownload = (Button)findViewById(R.id.btnDownLoad);
         findViewById(R.id.btnAddNote).setOnClickListener(btnAddNote_clickHandler);
 
         //item点击事件
@@ -137,6 +141,8 @@ public class NotesActivity extends Activity {
                 return true;
             }
         });
+        NotesSync notesSync = new NotesSync(this,btnUpload,btnDownload);
+
     }
 
     /**
@@ -147,7 +153,6 @@ public class NotesActivity extends Activity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         switch (requestCode) {
             case REQUEST_CODE_ADD_NOTE:
             case REQUEST_CODE_EDIT_NOTE:
@@ -155,11 +160,9 @@ public class NotesActivity extends Activity {
                     refreshNotesListView();
                 }
                 break;
-
             default:
                 break;
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
