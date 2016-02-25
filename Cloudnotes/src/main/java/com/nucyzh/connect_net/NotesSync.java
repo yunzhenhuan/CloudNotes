@@ -1,6 +1,5 @@
 package com.nucyzh.connect_net;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,16 +12,15 @@ import android.widget.Toast;
 
 import com.nucyzh.R;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.UploadFileListener;
-import cn.bmob.v3.listener.ValueEventListener;
+import cn.bmob.v3.listener.UploadBatchListener;
 
 /**
  * Author:XiYang on 2016/2/25.
@@ -33,14 +31,6 @@ import cn.bmob.v3.listener.ValueEventListener;
 public class NotesSync {
     Context context;
 
-    public static String TABLE_NAME_NOTES = "notes";
-    public static String TABLE_NAME_MEDIA = "media";
-    public static String COLUMN_NAME_ID = "_id";
-    public static String COLUMN_NAME_NOTE_NAME = "name";
-    public static String COLUMN_NAME_NOTE_CONTENT = "content";
-    public static String COLUMN_NAME_NOTE_DATE = "date";
-    public static String COLUMN_NAME_MEDIA_PATH = "path";
-    public static String COLUMN_NAME_MEDIA_OWNER_NOTE_ID = "note_id";
 
     private ListView lv_data;
     private Button btn_upload;
@@ -50,15 +40,24 @@ public class NotesSync {
     List<Sync> messages = new ArrayList<Sync>();
     BmobRealTimeData data = new BmobRealTimeData();
 
+    public static String currentPath;
+
+
+    public NotesSync(String currentPath) {
+        this.currentPath = currentPath;
+        System.out.println(currentPath);
+    }
+
     public NotesSync(Context context, Button upLoad, Button downLoad) {
         this.context = context;
         this.btn_upload = upLoad;
         this.btn_download = downLoad;
         init();
     }
-
+    List<BmobObject> picture;
     private void init() {
         System.out.println("init()");
+        picture = new ArrayList<BmobObject>();
         //Bmob.initialize(this, "c238263866c0f587531c8c406cc47251");
         //data.start(context, new ValueEventListener() {
 
@@ -73,80 +72,43 @@ public class NotesSync {
                 }
             }
         });*/
+
         btn_upload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context,"Upload",Toast.LENGTH_SHORT);
                         System.out.println("点击upload");
-                        data.start(context, new ValueEventListener() {
+
+                        System.out.println("test1");
+                        String[] filePaths = new String[1];
+                        filePaths[0] = currentPath;
+
+                        final File file = new File(currentPath);
+                        //批量上传是会依次上传文件夹里面的文件
+                        Bmob.uploadBatch(context, filePaths, new UploadBatchListener() {
                             @Override
-                            public void onDataChange(JSONObject arg0) {
-                                // TODO Auto-generated method stub
-                                /*if (BmobRealTimeData.ACTION_UPDATETABLE.equals(arg0.optString("action"))) {
-                                    JSONObject data = arg0.optJSONObject("data");
-                                    messages.add(new Chat(data.optString("name"), data.optString("content")));
-                                    myAdapter.notifyDataSetChanged();
-                                }*/
-                                System.out.println("DataChange");
-                            }
-                            @Override
-                            public void onConnectCompleted() {
-                                // TODO Auto-generated method stub
-                                if (data.isConnected()) {
-                                    data.subTableUpdate("Notes");//更新数据表
+                            public void onSuccess(List<BmobFile> files, List<String> urls) {
+                                System.out.println("上传成功");
+
+                                if (urls.size() == 1) {//如果第一个文件上传完成
+                                    System.out.println("上传成功1");
+                                    Sync sync = new Sync("ABC", files.get(0));
+
+                                    picture.add(sync);
                                 }
+                            }
+
+                            @Override
+                            public void onProgress(int i, int i1, int i2, int i3) {
+                                System.out.println("上传中...");
+                            }
+
+                            @Override
+                            public void onError(int i, String s) {
+                                System.out.println("上传失败");
                             }
                         });
-                        @SuppressWarnings("unused")
-                        File file = new File("/mnt/sdcard/" + COLUMN_NAME_MEDIA_PATH);
-                        if (file != null) {
-                            final BmobFile bmobFile = new BmobFile(file);
-                            //上传进度对话框
-                            final ProgressDialog progressDialog = new ProgressDialog(context);
-                            progressDialog.setMessage("正在上传。。。");
-                            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                            progressDialog.show();
-                            bmobFile.upload(context, new UploadFileListener() {
-                                @Override
-                                public void onSuccess() {
-                                    // TODO Auto-generated method stub
-                                    // 文件上传成功后，可将文件对象保存到数据表中
-                                    Toast.makeText(context, "上传media成功", Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                  /*final GameSauce gs = new GameSauce();
-                                  gs.setPlayerName("rohs");
-                                  gs.setPic(bmobFile);
-                                  gs.save(MainActivity.this, new SaveListener() {
-                                      @Override
-                                      public void onSuccess() {
-                                          // TODO Auto-generated method stub
-                                          // toast("创建数据成功："+gs.getObjectId());
-                                      }
 
-                                      @Override
-                                      public void onFailure(int code, String msg) {
-                                          // TODO Auto-generated method stub
-                                          toast("创建数据失败：" + msg);
-                                      }
-                                  });
-*/
-                                }
-
-                                public void onProgress(Integer value) {
-                                    // TODO Auto-generated method stub //
-                                    // L.d("上传进度：" + value);
-                                }
-
-                                @Override
-                                public void onFailure(int arg0, String arg1) {
-                                    // TODO Auto-generated method stub
-                                    Toast.makeText(context, "上传media失败" + arg1, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            Toast.makeText(context, "文件为空", Toast.LENGTH_SHORT).show();
-                        }
                     }
                 }
         );
@@ -154,7 +116,7 @@ public class NotesSync {
             @Override
             public void onClick(View v) {
                 System.out.println("点击Download");
-                Toast.makeText(context,"Upload",Toast.LENGTH_SHORT);
+                Toast.makeText(context, "Upload", Toast.LENGTH_SHORT);
 
                 //Chat chat = new Chat(name, msg);
                 /*Sync sync = new Sync(id, path, note_id);

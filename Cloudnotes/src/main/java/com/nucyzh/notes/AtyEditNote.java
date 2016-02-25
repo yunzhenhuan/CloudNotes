@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nucyzh.R;
+import com.nucyzh.connect_net.NotesSync;
 import com.nucyzh.notes.db.NotesDB;
 
 import java.io.File;
@@ -57,6 +58,10 @@ public class AtyEditNote extends ListActivity {
         Intent i;
         File f;
 
+        /**
+         * 点击AddNotes
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -72,6 +77,7 @@ public class AtyEditNote extends ListActivity {
                         }
                     }
                     currentPath = f.getAbsolutePath();
+                    new NotesSync(currentPath);
                     i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                     startActivityForResult(i, REQUEST_CODE_GET_PHOTO);
                     break;

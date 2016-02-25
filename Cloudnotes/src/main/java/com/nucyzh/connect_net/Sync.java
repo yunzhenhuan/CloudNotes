@@ -11,29 +11,13 @@ import cn.bmob.v3.datatype.BmobFile;
  */
 public class Sync extends BmobObject {
     private String id;
-    private String name;
-    private String content;
-    private String date;
-    BmobFile file;
+    private BmobFile file;
 
+    public Sync() {
 
-    private String path;
-    private String note_id;
-
-    /**
-     * @param id
-     * @param name    标题
-     * @param content 内容
-     * @param date    编辑日期
-     * @param path  媒体文件路径
-     * @param note_id 媒体所有者的id
-     * @param file    文件
-     */
-    public Sync(String id, String name, String content, String date, String path, String note_id, BmobFile file) {
+    }
+    public Sync(String id, BmobFile file) {
         this.id = id;
-        this.name = name;
-        this.content = content;
-        this.date = date;
         this.file = file;
     }
 
@@ -41,54 +25,13 @@ public class Sync extends BmobObject {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public void setNote_id(String note_id) {
-        this.note_id = note_id;
-    }
-
     public void setFile(BmobFile file) {
         this.file = file;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
     public String getId() {
         return id;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getNote_id() {
-        return note_id;
-    }
     public BmobFile getFile() {
         return file;
     }

@@ -79,6 +79,7 @@ public class ChatActivity extends Activity  {
                     JSONObject data = arg0.optJSONObject("data");
                     messages.add(new Chat(data.optString("name"), data.optString("content")));
                     myAdapter.notifyDataSetChanged();
+
                 }
             }
             @Override
