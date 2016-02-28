@@ -9,54 +9,23 @@ import cn.bmob.v3.datatype.BmobFile;
  *
  * @class description
  */
-public class Sync extends BmobObject {
+public class Media extends BmobObject {
     private String id;
-    private String name;
-    private String content;
-    private String date;
     private String path;
     private String note_id;
-    public Sync() {
+    private BmobFile file;
 
-    }
-
-
-    public Sync(String id, String name, String content, String date) {
-        this.id = id;
-        this.name = name;
-        this.content = content;
-        this.date = date;
-    }
-
-    public Sync(String id, String path, String note_id,BmobFile file) {
+    public Media(String id, String path, String note_id ) {
         this.id = id;
         this.path = path;
-        this.file = file;
         this.note_id = note_id;
-    }
 
-    public String getContent() {
-        return content;
     }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Media(String id, String path, String note_id, BmobFile file) {
+        this.id = id;
+        this.path = path;
+        this.note_id = note_id;
+        this.file = file;
     }
 
     public String getPath() {
@@ -74,8 +43,6 @@ public class Sync extends BmobObject {
     public void setNote_id(String note_id) {
         this.note_id = note_id;
     }
-
-    private BmobFile file;
 
 
     public void setId(String id) {
