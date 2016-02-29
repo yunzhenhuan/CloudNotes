@@ -15,6 +15,9 @@ public class Media extends BmobObject {
     private String note_id;
     private BmobFile file;
 
+    public Media(){
+
+    }
     public Media(String id, String path, String note_id ) {
         this.id = id;
         this.path = path;

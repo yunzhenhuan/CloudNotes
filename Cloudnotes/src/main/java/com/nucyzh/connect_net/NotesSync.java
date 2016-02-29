@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nucyzh.R;
+import com.nucyzh.connect_net.utils.ToastUtil;
+import com.nucyzh.notes.NotesActivity;
 import com.nucyzh.notes.db.NotesDB;
 
 import java.util.ArrayList;
@@ -21,10 +23,12 @@ import java.util.List;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobRealTimeData;
-import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.DeleteListener;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UploadBatchListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Author:XiYang on 2016/2/25.
@@ -62,6 +66,7 @@ public class NotesSync {
     List<BmobObject> picture = new ArrayList<BmobObject>();
 
     private void init() {
+        Bmob.initialize(context, "c238263866c0f587531c8c406cc47251");
         System.out.println("init()");
         db = new NotesDB(context);
         dbRead = db.getReadableDatabase();
@@ -77,85 +82,278 @@ public class NotesSync {
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progressDialog.show();
 
-
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                final String[] filePaths = new String[1];
-                                filePaths[0] = currentPath;
-
-                                //批量上传是会依次上传文件夹里面的文件
-                                Bmob.uploadBatch(context, filePaths, new UploadBatchListener() {
+                                final BmobQuery<Notes> query = new BmobQuery<Notes>();
+                                query.findObjects(context, new FindListener<Notes>() {
                                     @Override
-                                    public void onSuccess(List<BmobFile> files, List<String> urls) {
-                                        progressDialog.dismiss();
-                                        // 查询本笔记的noteId并且检查是否有对应的多媒体，有则遍历显示在MediaList中
-                                        Toast.makeText(context, "上传文件成功", Toast.LENGTH_SHORT).show();
-                                        String table = NotesDB.TABLE_NAME_NOTES;
-                                        Cursor cursor = dbRead.query(table, null, null, null, null, null, null);
+                                    public void onSuccess(List<Notes> list) {
+                                        final Cursor cursor = dbRead.query(NotesDB.TABLE_NAME_NOTES, null, null, null, null, null, null);
                                         while (cursor.moveToNext()) {
-                                            //根据列名获取列索引
-                                            int nameColumnIndex = cursor.getColumnIndex("_id");
-                                            String strValue_id = cursor.getString(nameColumnIndex);
-                                            int nameColumnIndex_name = cursor.getColumnIndex("name");
-                                            String strValue_name = cursor.getString(nameColumnIndex_name);
-                                            int nameColumnIndex_content = cursor.getColumnIndex("content");
-                                            String strValue_content = cursor.getString(nameColumnIndex_content);
-                                            int nameColumnIndex_date = cursor.getColumnIndex("date");
-                                            String strValue_date = cursor.getString(nameColumnIndex_date);
-                                            System.out.println(strValue_id + strValue_name + strValue_content + strValue_date);
-                                            Notes notes = new Notes(strValue_id, strValue_name, strValue_content, strValue_date);
-                                            picture.add(notes);
-                                        }
+                                            String id = cursor.getString(cursor.getColumnIndex("_id"));
+                                            boolean already = false;  //记录是否已经上传过
+                                            for (int i = 0; i < list.size(); i++) {//查出云端的所有数据
 
-                                        String table2 = NotesDB.TABLE_NAME_MEDIA;
-                                        Cursor cursor2 = dbRead.query(table2, null, null, null, null, null, null);
-                                        while (cursor2.moveToNext()) {
-                                            //根据列名获取列索引
-                                            int nameColumnIndex = cursor2.getColumnIndex("_id");
-                                            String strValue_id = cursor2.getString(nameColumnIndex);
-                                            int nameColumnIndex_path = cursor2.getColumnIndex("path");
-                                            String strValue_path = cursor2.getString(nameColumnIndex_path);
-                                            int nameColumnIndex_note_id = cursor2.getColumnIndex("note_id");
-                                            String strValue_note_id = cursor2.getString(nameColumnIndex_note_id);
+                                                Cursor c_test = dbRead.rawQuery("select * from notes where _id=?", new String[]{list.get(i).getId()});
+                                                if (!c_test.moveToNext()) {//如果本地数据库中没有
+                                                    System.out.println("删除该条数据");
+                                                    Notes notes2 = list.get(i);
+                                                    notes2.delete(context, notes2.getObjectId(), new DeleteListener() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            System.out.println("删除该条数据成功");
+                                                        }
 
-                                            System.out.println(strValue_id + strValue_path + strValue_note_id );
-                                            Media media = new Media(strValue_id, strValue_path, strValue_path);
-                                            picture.add(media);
-                                        }
+                                                        @Override
+                                                        public void onFailure(int i, String s) {
+                                                            System.out.println("删除该条数据失败");
+                                                        }
+                                                    });
+                                                }
+                                                if (id.equals(list.get(i).getId())) {//已经上传过
+                                                    already = true;
+                                                    System.out.println("已经上传过1");
+                                                    Notes notes2 = list.get(i);
+                                                    notes2.setId(id);
+                                                    notes2.setName(cursor.getString(cursor.getColumnIndex("name")));
+                                                    notes2.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                                                    notes2.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                                                    System.out.println("已经上传过,本次更新");
+                                                    notes2.update(context, notes2.getObjectId(), new UpdateListener() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            System.out.println("本次更新成功");
+                                                        }
 
-                                       /* for (int i = 1; i <= 1; i++) {
-                                            if (urls.size() == i) {//如果第i个文件上传完成
-
+                                                        @Override
+                                                        public void onFailure(int i, String s) {
+                                                            System.out.println("本次更新失败");
+                                                        }
+                                                    });
+                                                    break;
+                                                }
                                             }
-                                        }*/
-                                        insertBatch(picture);
-                                        progressDialog.dismiss();
-                                    }
+                                            if (already) {
 
-                                    @Override
-                                    public void onProgress(int i, int i1, int i2, int i3) {
-                                        Toast.makeText(context, "上传中...", Toast.LENGTH_SHORT).show();
-
+                                            } else {//如果没有上传过就上传
+                                                Notes notes = new Notes();
+                                                notes.setId(id);
+                                                notes.setName(cursor.getString(cursor.getColumnIndex("name")));
+                                                notes.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                                                notes.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                                                notes.save(context);
+                                                System.out.println("没有上传过");
+                                            }
+                                        }
                                     }
 
                                     @Override
                                     public void onError(int i, String s) {
-                                        Toast.makeText(context, "上传失败", Toast.LENGTH_SHORT).show();
+                                        ToastUtil.toast(context, s + "初次上传");//查询失败
+                                        List<BmobObject> notes1 = new ArrayList<BmobObject>();
+
+                                        final Cursor cursor = dbRead.query(NotesDB.TABLE_NAME_NOTES, null, null, null, null, null, null);
+                                        while (cursor.moveToNext()) {
+                                            //根据列名获取列索引
+                                            Notes notes = new Notes();
+                                            notes.setId(cursor.getString(cursor.getColumnIndex("_id")));
+                                            notes.setName(cursor.getString(cursor.getColumnIndex("name")));
+                                            notes.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                                            notes.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                                            notes1.add(notes);
+                                        }//批量上传
+                                        new BmobObject().insertBatch(context, notes1, new SaveListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                ToastUtil.toast(context, "上传成功");
+                                            }
+
+                                            @Override
+                                            public void onFailure(int arg0, String arg1) {
+                                                ToastUtil.toast(context, arg1 + "上传失败");
+                                            }
+                                        });
                                     }
                                 });
+                                final BmobQuery<Media> query_media = new BmobQuery<Media>();
+                                query_media.findObjects(context, new FindListener<Media>() {
+                                    @Override
+                                    public void onSuccess(List<Media> list) {
+                                        System.out.println("在云上查找Media成功");
+                                        final Cursor cursor = dbRead.query(NotesDB.TABLE_NAME_MEDIA, null, null, null, null, null, null);
+                                        while (cursor.moveToNext()) {
+                                            //根据列名获取列索引
+                                            System.out.println("_id=" + cursor.getColumnIndex("_id"));
+                                            System.out.println("path=" + cursor.getColumnIndex("path"));
+                                            System.out.println("notes_id=" + cursor.getColumnIndex("path"));
+                                            Media media = new Media();
+                                            String id = cursor.getString(cursor.getColumnIndex("_id"));
+                                            boolean already = false;  //记录是否已经上传过
+                                            for (int i = 0; i < list.size(); i++) {//查出云端的所有数据
+                                                Cursor c_test = dbRead.rawQuery("select * from notes where _id=?", new String[]{list.get(i).getId()});
+                                                if (!c_test.moveToNext()) {//如果本地数据库中没有
+                                                    System.out.println("Media----删除该条数据");
+                                                    Media media2 = list.get(i);
+                                                    media2.delete(context, media2.getObjectId(), new DeleteListener() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            System.out.println("删除该条数据成功");
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(int i, String s) {
+                                                            System.out.println("删除该条数据失败");
+                                                        }
+                                                    });
+                                                }
+                                                if (id.equals(list.get(i).getId())) {//已经上传过
+                                                    already = true;
+                                                    System.out.println("已经上传过1");
+                                                    Media media2 = (Media) list.get(i);
+                                                    media2.setId(id);
+                                                    media2.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                                                    media2.setNote_id(cursor.getString(cursor.getColumnIndex("note_id")));
+                                                    System.out.println("Media----已经上传过,本次更新");
+                                                    media2.update(context, media2.getObjectId(), new UpdateListener() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            System.out.println("Media----本次更新成功");
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(int i, String s) {
+                                                            System.out.println("Media----本次更新失败");
+                                                        }
+                                                    });
+                                                    break;
+                                                }
+                                            }
+                                            if (already) {
+
+                                            } else {//如果没有上传过就上传
+                                                media.setId(id);
+                                                media.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                                                media.setNote_id(cursor.getString(cursor.getColumnIndex("note_id")));
+                                                media.save(context);
+                                                System.out.println("Media----没有上传过");
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+                                        System.out.println("在云上查找Media失败");
+                                        ToastUtil.toast(context, s + "初次上传Media");//查询失败
+                                        List<BmobObject> media1 = new ArrayList<BmobObject>();
+                                        final Cursor cursor = dbRead.query(NotesDB.TABLE_NAME_MEDIA, null, null, null, null, null, null);
+                                        while (cursor.moveToNext()) {
+                                            //根据列名获取列索引
+                                            Media media = new Media();
+                                            media.setId(cursor.getString(cursor.getColumnIndex("_id")));
+                                            media.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                                            media.setNote_id(cursor.getString(cursor.getColumnIndex("note_id")));
+                                            media1.add(media);
+                                        }//批量上传
+                                        new BmobObject().insertBatch(context, media1, new SaveListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                ToastUtil.toast(context, "上传成功---Media");
+                                            }
+
+                                            @Override
+                                            public void onFailure(int arg0, String arg1) {
+                                                ToastUtil.toast(context, arg1 + "上传失败");
+                                            }
+                                        });
+                                    }
+                                });
+                                progressDialog.dismiss();
+
                             }
                         }).start();
+                        ToastUtil.toast(context, "上传成功");
                     }
                 }
         );
-        btn_download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "downloading", Toast.LENGTH_SHORT).show();
+        btn_download.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "downloading", Toast.LENGTH_SHORT).show();
+                        System.out.println("点击downloading");
+                        final ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("正在下载。。。");
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.show();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final BmobQuery<Notes> query = new BmobQuery<Notes>();
+                                query.findObjects(context, new FindListener<Notes>() {
+                                            @Override
+                                            public void onSuccess(List<Notes> list) {
+                                                for (int i = 0; i < list.size(); i++) {
+                                                    System.out.println("1test");
+                                                    Cursor c_test = dbRead.query("notes", new String[]{"_id,name,content,date"}, "_id =?", new String[]{list.get(i).getId()}, null, null, null);
+                                                    //dbRead.rawQuery("select * from notes where _id=?", new String[]{list.get(i).getId()});
+                                                    System.out.println("2teset");
+                                                    if (!c_test.moveToNext()) {//如果本地数据库中没有
+                                                        dbWrite.execSQL("insert into notes values('"
+                                                                + list.get(i).getId() + "','"
+                                                                + list.get(i).getName() + "','"
+                                                                + list.get(i).getContent() + "','"
+                                                                + list.get(i).getDate() + "')");
+                                                        System.out.println("如果本地数据库中没有");
+                                                    }
+                                                    {
+                                                        dbWrite.execSQL("update notes set name ='" + list.get(i).getName() + "'"
+                                                                + ",content='" + list.get(i).getContent() + "'"
+                                                                + ",date='" + list.get(i).getDate() + "'where _id=" + list.get(i).getId());
+                                                    }
+                                                }
+                                                NotesActivity.adapter.changeCursor(dbRead.query(NotesDB.TABLE_NAME_NOTES, null, null,
+                                                        null, null, null, null));
+                                            }
 
-            }
-        });
+                                            @Override
+                                            public void onError(int i, String s) {
+                                                ToastUtil.toast(context, s + "查询失败");//查询失败
+
+                                            }
+                                        }
+
+                                );
+                                progressDialog.dismiss();
+                            }
+                        }
+
+                        ).
+
+                                start();
+
+                        ToastUtil.toast(context, "Download complete");
+
+                    }
+                }
+
+        );
+    }
+
+    /**
+     * 弹出提示
+     *
+     * @param userBmobObjects
+     * @return
+     */
+
+    private String showMsg(List<Notes> userBmobObjects) {
+        String msg = "";
+        for (Notes notes : userBmobObjects) {
+            msg += notes.getObjectId() + "," + notes.getId() + "," + notes.getName() + ","
+                    + notes.getContent() + "," + notes.getDate() + "\n";
+        }
+        return msg;
     }
 
     /**

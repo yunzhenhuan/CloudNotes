@@ -14,6 +14,9 @@ public class Notes extends BmobObject {
     private String content;
     private String date;
 
+    public Notes(){
+
+    }
     public Notes(String id, String name, String content, String date) {
         this.id = id;
         this.name = name;

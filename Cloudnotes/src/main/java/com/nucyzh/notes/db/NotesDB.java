@@ -20,25 +20,27 @@ public class NotesDB extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_MEDIA_PATH = "path";
     public static final String COLUMN_NAME_MEDIA_OWNER_NOTE_ID = "note_id";
 
+
     public NotesDB(Context context) {
         super(context, "notes", null, 1);
     }
-
     /**
      * 当第一次打开数据库，表不存在时调用，以创建表
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME_NOTES + "("
+        db.execSQL("CREATE " + TABLE_NAME_NOTES + "("
                 + COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME_NOTE_NAME + " TEXT NOT NULL DEFAULT \"\","
                 + COLUMN_NAME_NOTE_CONTENT + " TEXT NOT NULL DEFAULT \"\","
                 + COLUMN_NAME_NOTE_DATE + " TEXT NOT NULL DEFAULT \"\"" + ")");
+        System.out.println("创建notes");
         db.execSQL("CREATE TABLE " + TABLE_NAME_MEDIA + "("
                 + COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME_MEDIA_PATH + " TEXT NOT NULL DEFAULT \"\","
                 + COLUMN_NAME_MEDIA_OWNER_NOTE_ID + " INTEGER NOT NULL DEFAULT 0"
                 + ")");
+        System.out.println("创建media");
     }
 
     /**

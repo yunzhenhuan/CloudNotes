@@ -20,7 +20,7 @@ import com.nucyzh.R;
 
 public class ShakeActivity extends Activity {
 	private ImageView shark_img;// Ò¡Ò»Ò¡Í¼Æ¬
-	private Button shark_button;// Ò¡Ò»Ò¡°´Å¥
+	private Button shark_button;//Ò¡Ò»Ò¡°´Å¥
 
 	private Vibrator mVibrator;// ¿ªÆôÕð¶¯
 	private ShakeListener mShakeListener = null;

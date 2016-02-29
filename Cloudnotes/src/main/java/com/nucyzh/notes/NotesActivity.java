@@ -27,7 +27,7 @@ import com.nucyzh.notes.db.NotesDB;
  * 呈现已经存在的日志和添加日志按钮
  */
 public class NotesActivity extends Activity {
-    private SimpleCursorAdapter adapter = null;
+    public static SimpleCursorAdapter adapter = null;
     private NotesDB db;
     private SQLiteDatabase dbRead;
     private ListView noteList;
@@ -71,8 +71,8 @@ public class NotesActivity extends Activity {
                 R.id.tvName, R.id.tvDate});
         noteList.setAdapter(adapter);
         refreshNotesListView();
-        Button btnUpload = (Button)findViewById(R.id.btnUpload);
-        Button btnDownload = (Button)findViewById(R.id.btnDownLoad);
+        Button btnUpload = (Button) findViewById(R.id.btnUpload);
+        Button btnDownload = (Button) findViewById(R.id.btnDownLoad);
         findViewById(R.id.btnAddNote).setOnClickListener(btnAddNote_clickHandler);
 
         //item点击事件
@@ -141,7 +141,7 @@ public class NotesActivity extends Activity {
                 return true;
             }
         });
-        NotesSync notesSync = new NotesSync(this,btnUpload,btnDownload);
+        NotesSync notesSync = new NotesSync(this, btnUpload, btnDownload);
 
     }
 

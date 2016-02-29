@@ -20,7 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nucyzh.R;
-import com.nucyzh.connect_net.NotesSync;
 import com.nucyzh.notes.db.NotesDB;
 
 import java.io.File;
@@ -54,10 +53,8 @@ public class AtyEditNote extends ListActivity {
      * 按钮点击的监听器，实现OnClickListener接口
      */
     private View.OnClickListener btnClickHandler = new View.OnClickListener() {
-
         Intent i;
         File f;
-
         /**
          * 点击AddNotes
          * @param v
@@ -76,8 +73,6 @@ public class AtyEditNote extends ListActivity {
                             e.printStackTrace();
                         }
                     }
-                    currentPath = f.getAbsolutePath();
-                    new NotesSync(currentPath);
                     i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                     startActivityForResult(i, REQUEST_CODE_GET_PHOTO);
                     break;
@@ -208,8 +203,7 @@ public class AtyEditNote extends ListActivity {
      * @return File类型的目录路径
      */
     public File getMediaDir() {
-        File dir = new File(Environment.getExternalStorageDirectory(),
-                "NotesMedia");
+        File dir = new File(Environment.getExternalStorageDirectory(), "NotesMedia");
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -245,16 +239,13 @@ public class AtyEditNote extends ListActivity {
      * @return
      */
     public int saveNote() {
-
         ContentValues cv = new ContentValues();
         cv.put(NotesDB.COLUMN_NAME_NOTE_NAME, etName.getText().toString());
         cv.put(NotesDB.COLUMN_NAME_NOTE_CONTENT, etContent.getText().toString());
-        cv.put(NotesDB.COLUMN_NAME_NOTE_DATE, new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss").format(new Date()));
+        cv.put(NotesDB.COLUMN_NAME_NOTE_DATE, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
 
         if (noteId > -1) {
-            dbWrite.update(NotesDB.TABLE_NAME_NOTES, cv, NotesDB.COLUMN_NAME_ID
-                    + "=?", new String[]{noteId + ""});
+            dbWrite.update(NotesDB.TABLE_NAME_NOTES, cv, NotesDB.COLUMN_NAME_ID + "=?", new String[]{noteId + ""});
             return noteId;
         } else {
             return (int) dbWrite.insert(NotesDB.TABLE_NAME_NOTES, null, cv);
@@ -311,8 +302,7 @@ public class AtyEditNote extends ListActivity {
             }
             MediaListCellData data = getItem(position);
 
-            ImageView ivIcon = (ImageView) convertView
-                    .findViewById(R.id.ivIcon);
+            ImageView ivIcon = (ImageView) convertView.findViewById(R.id.ivIcon);
             TextView tvPath = (TextView) convertView.findViewById(R.id.tvPath);
 
             ivIcon.setImageResource(data.iconId);
@@ -335,7 +325,6 @@ public class AtyEditNote extends ListActivity {
 
         public MediaListCellData(String path, int id) {
             this(path);
-
             this.id = id;
         }
 
