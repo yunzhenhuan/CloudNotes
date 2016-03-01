@@ -57,8 +57,6 @@ public class NotesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notes_desktop);
         noteList = (ListView) findViewById(R.id.notelist2);
-        textView = (TextView) findViewById(R.id.text);
-        textView.setText("Notes");  //设置标题
         // 操作数据库
         db = new NotesDB(this);
         dbRead = db.getReadableDatabase();
@@ -66,8 +64,8 @@ public class NotesActivity extends Activity {
         // 查询数据库并将数据显示在ListView上。
         // 建议使用CursorLoader，这个操作因为在UI线程，容易引起无响应错误
         adapter = new SimpleCursorAdapter(this, R.layout.notes_list_cell, null,
-                new String[]{NotesDB.COLUMN_NAME_NOTE_NAME,
-                        NotesDB.COLUMN_NAME_NOTE_DATE}, new int[]{
+                new String[]{NotesDB.COLUMN_NAME_ID,NotesDB.COLUMN_NAME_NOTE_NAME,
+                        NotesDB.COLUMN_NAME_NOTE_DATE}, new int[]{R.id.note_id,
                 R.id.tvName, R.id.tvDate});
         noteList.setAdapter(adapter);
         refreshNotesListView();
@@ -125,6 +123,7 @@ public class NotesActivity extends Activity {
                                 //根据id删除
                                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                                 db.execSQL("delete from notes where _id=? ", new Object[]{noteID});
+                                db.execSQL("delete from media where note_id=? ", new Object[]{noteID});
                                 db.close();
                                 onCreate(null);
                             }
