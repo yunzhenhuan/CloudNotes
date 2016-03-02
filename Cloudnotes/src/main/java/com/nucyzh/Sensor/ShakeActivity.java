@@ -96,15 +96,15 @@ public class ShakeActivity extends Activity {
                 mVibrator.cancel();
                 mShakeListener.start();
                 shark_img.clearAnimation();
-
+                Intent intent = new Intent();
+                intent.setClass(ShakeActivity.this, Main.class);
+                ShakeActivity.this.startActivity(intent);
+                // 播放音频，可以对左右音量分别设置，还可以设置优先级，循环次数以及速率
+                // 速率最低0.5最高为2，1代表 正常速度
+                soundPool.play(hitOkSfx1, 1, 1, 0, 0, 1);
             }
         }, 2000);
-        Intent intent = new Intent();
-        intent.setClass(ShakeActivity.this, Main.class);
-        ShakeActivity.this.startActivity(intent);
-        // 播放音频，可以对左右音量分别设置，还可以设置优先级，循环次数以及速率
-        // 速率最低0.5最高为2，1代表 正常速度
-        soundPool.play(hitOkSfx1, 1, 1, 0, 0, 1);
+
     }
 
     /**
