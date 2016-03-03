@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.ValueEventListener;
@@ -29,7 +28,7 @@ import cn.bmob.v3.listener.ValueEventListener;
  * Author:XiYang on 2016/2/20.
  * Email:765849854@qq.com
  */
-public class ChatActivity extends Activity  {
+public class ChatActivity extends Activity {
     ListView lv_data;
     Button btn_send;
     EditText et_name, et_content;
@@ -57,6 +56,7 @@ public class ChatActivity extends Activity  {
                     return;
                 } else {
                     sendMsg(name, content);
+                    System.out.println("send successful");
                 }
             }
         });
@@ -67,11 +67,9 @@ public class ChatActivity extends Activity  {
     }
 
 
-
     private void init() {
-        Bmob.initialize(this, "c238263866c0f587531c8c406cc47251");
+        // Bmob.initialize(this, "c238263866c0f587531c8c406cc47251");
         data.start(this, new ValueEventListener() {
-
             @Override
             public void onDataChange(JSONObject arg0) {
                 // TODO Auto-generated method stub
@@ -82,6 +80,7 @@ public class ChatActivity extends Activity  {
 
                 }
             }
+
             @Override
             public void onConnectCompleted() {
                 // TODO Auto-generated method stub
@@ -94,11 +93,12 @@ public class ChatActivity extends Activity  {
 
     /**
      * 发送消息
+     *
      * @param name
      * @param msg
      */
     private void sendMsg(String name, String msg) {
-        Chat chat = new Chat("昵称:"+name, "消息:"+msg);
+        Chat chat = new Chat("昵称:" + name, "消息:" + msg);
         chat.save(this, new SaveListener() {
 
             @Override
@@ -139,7 +139,8 @@ public class ChatActivity extends Activity  {
         public View getView(int position, View convertView, ViewGroup parent) {
             // TODO Auto-generated method stub
             if (convertView == null) {
-                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.notes_desktop, null);
+                System.out.print("getView");
+                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.online_chat, null);
                 holder = new ViewHolder();
                 holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
                 holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);

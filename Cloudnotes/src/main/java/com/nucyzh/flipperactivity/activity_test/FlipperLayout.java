@@ -30,8 +30,7 @@ public class FlipperLayout extends ViewGroup {
     public FlipperLayout(Context context) {
         super(context);
         mScroller = new Scroller(context);
-        mWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                54, getResources().getDisplayMetrics());
+        mWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54, getResources().getDisplayMetrics());
 
     }
 
@@ -95,8 +94,7 @@ public class FlipperLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 mVelocityTracker.computeCurrentVelocity(1000,
                         ViewConfiguration.getMaximumFlingVelocity());
-                if (mScrollState == SCROLL_STATE_ALLOW
-                        && getWidth() - (int) ev.getX() < mWidth) {
+                if (mScrollState == SCROLL_STATE_ALLOW && getWidth() - (int) ev.getX() < mWidth) {
                     return true;
                 }
                 break;
@@ -105,8 +103,7 @@ public class FlipperLayout extends ViewGroup {
                 if (mOnClick) {
                     mOnClick = false;
                     mScreenState = SCREEN_STATE_CLOSE;
-                    mScroller.startScroll(getChildAt(1).getScrollX(), 0,
-                            -getChildAt(1).getScrollX(), 0, 800);
+                    mScroller.startScroll(getChildAt(1).getScrollX(), 0, -getChildAt(1).getScrollX(), 0, 800);
                     invalidate();
                 }
                 break;
@@ -122,8 +119,7 @@ public class FlipperLayout extends ViewGroup {
         obtainVelocityTracker(ev);
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mTouchState = mScroller.isFinished() ? TOUCH_STATE_RESTART
-                        : TOUCH_STATE_SCROLLING;
+                mTouchState = mScroller.isFinished() ? TOUCH_STATE_RESTART : TOUCH_STATE_SCROLLING;
                 if (mTouchState == TOUCH_STATE_SCROLLING) {
                     return false;
                 }
@@ -141,8 +137,7 @@ public class FlipperLayout extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
                 releaseVelocityTracker();
-                if (mScrollState == SCROLL_STATE_ALLOW
-                        && mScreenState == SCREEN_STATE_OPEN) {
+                if (mScrollState == SCROLL_STATE_ALLOW && mScreenState == SCREEN_STATE_OPEN) {
                     return true;
                 }
                 break;

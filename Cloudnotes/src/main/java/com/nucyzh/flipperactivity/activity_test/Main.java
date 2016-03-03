@@ -51,7 +51,9 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         text2 = new Text1_2(this);
         text3 = new Text1_3(this);
         text4 = new Text2_1(this);
+        System.out.println("test3");
         text5 = new Text2_2(this);
+        System.out.println("test4");
         text6 = new Text2_3(this);
         text7 = new Text3_1(this);
         text8 = new Text3_2(this);
@@ -60,6 +62,7 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         text11 = new Text4_2(this);
         text12 = new Text4_3(this);
         mAbout = new About(this);
+
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         mRoot.setLayoutParams(params);
         mRoot.addView(mDesktop.getView(), params);

@@ -21,7 +21,7 @@ import com.nucyzh.flipperactivity.activity_test.Main;
 
 public class ShakeActivity extends Activity {
     private ImageView shark_img;// 摇一摇图片
-    private Button shark_button;//摇一摇y按钮
+    private Button shark_button;//摇一摇按钮
 
     private Vibrator mVibrator;// 开启震动
     private ShakeListener mShakeListener = null;
@@ -57,7 +57,6 @@ public class ShakeActivity extends Activity {
         shark_img = (ImageView) findViewById(R.id.img);
         shark_button = (Button) findViewById(R.id.button);
         mShakeListener = new ShakeListener(this);
-
         setListener();
     }
 
@@ -104,15 +103,13 @@ public class ShakeActivity extends Activity {
                 soundPool.play(hitOkSfx1, 1, 1, 0, 0, 1);
             }
         }, 2000);
-
     }
 
     /**
      * 动画设置
      */
     private void setAnim() {
-        Animation operatingAnim = AnimationUtils.loadAnimation(this,
-                R.anim.shark_anim);
+        Animation operatingAnim = AnimationUtils.loadAnimation(this,R.anim.shark_anim);
         shark_img.startAnimation(operatingAnim);
     }
 
