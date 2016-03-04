@@ -11,8 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nucyzh.R;
-import com.nucyzh.login_third.LoginActivity;
-import com.nucyzh.online_chat.ChatActivity;
 import com.nucyzh.streetsdk.PanoramaActivity;
 import com.nucyzh.streetsdk.PanoramaFragActivity;
 
@@ -24,16 +22,14 @@ public class Text2_1 {
             new DemoInfo(R.string.demo_lable_pano_activity,
                     R.string.demo_desc_pano_activity, PanoramaActivity.class),
             new DemoInfo(R.string.demo_lable_pano_fragment,
-                    R.string.demo_desc_pano_fragment, PanoramaFragActivity.class),
-            new DemoInfo(R.string.demo_lable_real, R.string.demo_desc_data, ChatActivity.class),
-            new DemoInfo(R.string.demo_lable_login, R.string.demo_desc_login, LoginActivity.class)
+                    R.string.demo_desc_pano_fragment, PanoramaFragActivity.class)
     };
 
     public Text2_1(final Context context) {
         mContext = context;
         mWikiMsg = LayoutInflater.from(context).inflate(R.layout.maptest, null);
         TextView textView = (TextView) mWikiMsg.findViewById(R.id.text);
-        textView.setText("测试2_1");
+        textView.setText("Map Test");
 
         ListView listView = (ListView) mWikiMsg.findViewById(R.id.listView);
         DemoAdapter adapter = new DemoAdapter(context, demos);

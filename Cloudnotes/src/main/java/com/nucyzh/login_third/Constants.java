@@ -21,12 +21,12 @@ public class Constants {
     /**
      * 微信平台的APPID,请自行前往微信开放平台注册申请应用
      */
-    public static final String WEIXIN_APP_ID = "wx5ed4d9e4b23c86d5";
+    public static final String WEIXIN_APP_ID = "wx6460bffd78ef28ce";
 
     /**
      * 微信平台的AppSecret
      */
-    public static final String WEIXIN_APP_SECRET = "8f6ddb4f4b63877a6826b549b3b0bfcc ";
+    public static final String WEIXIN_APP_SECRET = "885fde8b6a4b9172dabc2d96f86bb134";
     /**
      * 微信平台的grant type，固定值：authorization_code
      */
@@ -36,7 +36,7 @@ public class Constants {
     /**
      * 当前Demo对应的weibo平台的APP_KEY ，开发者需使用自己的 APP_KEY替换该 APP_KEY
      */
-    public static final String WEIBO_APP_KEY = "248229023";
+    public static final String WEIBO_APP_KEY = "1251105361";
 
     /**
      * 当前 DEMO 应用的回调页，第三方应用可以使用自己的回调页。

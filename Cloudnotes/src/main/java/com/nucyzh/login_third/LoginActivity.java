@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nucyzh.R;
+import com.nucyzh.flipperactivity.activity_test.Main;
 import com.nucyzh.login_third.sinasdk.widget.LoginButton;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -37,7 +38,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private static String TAG= "LoginActivity";
     EditText et_account,et_pwd;
-
     Button btn_qq,btn_weixin;
 
     Button btn_login,btn_register;
@@ -49,10 +49,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_login);
         Log.i(TAG,"true");
-        toast("请自行初始化Bmob的ApplicationId");
         //初始化BmobSDK
         Bmob.initialize(this, Constants.BMOB_APPID);
         initView();
@@ -94,15 +92,13 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 account = et_account.getText().toString().trim();
                 pwd = et_pwd.getText().toString().trim();
                 if(account.equals("")){
-                    toast("填写你的用户名");
+                    toast("Please fill in your username");
                     return;
                 }
-
                 if(pwd.equals("")){
-                    toast("填写你的密码");
+                    toast("Please fill in your password");
                     return;
                 }
-
                 BmobUser user = new BmobUser();
                 user.setUsername(account);
                 user.setPassword(pwd);
@@ -118,7 +114,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void onFailure(int arg0, String arg1) {
                         // TODO Auto-generated method stub
-                        toast("登陆失败："+arg1);
+                        toast("Longin failed："+arg1);
                     }
                 });
                 break;
@@ -127,19 +123,18 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 account= et_account.getText().toString().trim();
                 pwd = et_pwd.getText().toString().trim();
                 if(account.equals("")){
-                    toast("填写你的用户名");
+                    toast("Please fill in your username");
                     return;
                 }
                 if(pwd.equals("")){
-                    toast("填写你的密码");
+                    toast("Please fill in your password");
                     return;
                 }
                 BmobUser u = new BmobUser();
                 u.setUsername(account);
                 u.setPassword(pwd);
-                u.setEmail("123456@qq.com");
+                //u.setEmail("123456@qq.com");
                 u.signUp(this, new SaveListener() {
-
                     @Override
                     public void onSuccess() {
                         // TODO Auto-generated method stub
@@ -159,7 +154,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.btn_weixin:
-                //微信登陆，文档可查看：https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&lang=zh_CN&token=0ba3e6d1a13e26f864ead7c8d3e90b15a3c6c34c
                 //发起微信登陆授权的请求
                 SendAuth.Req req = new SendAuth.Req();
                 //req.scope = "snsapi_userinfo";
@@ -184,12 +178,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
      */
     public void loginWithAuth(final BmobThirdUserAuth authInfo){
         BmobUser.loginWithAuthData(LoginActivity.this, authInfo, new OtherLoginListener() {
-
             @Override
             public void onSuccess(JSONObject userAuth) {
                 // TODO Auto-generated method stub
                 Log.i("smile",authInfo.getSnsType()+"登陆成功返回:"+userAuth);
-                Intent intent = new Intent(LoginActivity.this, MainTestActivity.class);
+                Intent intent = new Intent(LoginActivity.this, Main.class);
                 intent.putExtra("json", userAuth.toString());
                 intent.putExtra("from", authInfo.getSnsType());
                 startActivity(intent);

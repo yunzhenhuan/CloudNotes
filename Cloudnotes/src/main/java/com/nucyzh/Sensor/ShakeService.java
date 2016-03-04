@@ -1,61 +1,37 @@
 package com.nucyzh.Sensor;
 
-import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Vibrator;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.nucyzh.R;
 import com.nucyzh.flipperactivity.activity_test.Main;
 
-
-public class ShakeActivity extends Activity {
-    private ImageView shark_img;// 摇一摇图片
-    private Button shark_button;//摇一摇按钮
-
+public class ShakeService extends Service {
+    private static final String TAG = "ShakeService" ;
+    public static final String ACTION = "ShakeService";
     private Vibrator mVibrator;// 开启震动
     private ShakeListener mShakeListener = null;
 
     private SoundPool soundPool;// 音频池
     private int hitOkSfx;
     private int hitOkSfx1;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        setContentView(R.layout.shake_activity);
-
+    public void onCreate() {
         mVibrator = (Vibrator) getApplication().getSystemService(
                 VIBRATOR_SERVICE);
         // 这里指定声音池的最大音频流数目为10，
         // 声音品质为5可以自己测试感受下效果
         soundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
         // 载入音频流
-        //hitOkSfx = soundPool.load(this, R.raw.shake, 0);
         hitOkSfx = soundPool.load(this, R.raw.shake_sound_male, 0);
         hitOkSfx1 = soundPool.load(this, R.raw.shake_match, 0);
-        initView();
-    }
-
-    /**
-     * 初始化UI
-     */
-    private void initView() {
-        shark_img = (ImageView) findViewById(R.id.img);
-        shark_button = (Button) findViewById(R.id.button);
         mShakeListener = new ShakeListener(this);
         setListener();
     }
@@ -64,13 +40,6 @@ public class ShakeActivity extends Activity {
      * 设置监听器
      */
     private void setListener() {
-        // 摇一摇按钮
-        shark_button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setShark();
-            }
-        });
         // 监听摇晃
         mShakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
 
@@ -85,33 +54,24 @@ public class ShakeActivity extends Activity {
      * 摇一摇
      */
     private void setShark() {
-        setAnim();
         mShakeListener.stop();
         startVibrato();//开始振动
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mVibrator.cancel();
                 mShakeListener.start();
-                shark_img.clearAnimation();
-                Intent intent = new Intent();
-                intent.setClass(ShakeActivity.this, Main.class);
-                ShakeActivity.this.startActivity(intent);
                 // 播放音频，可以对左右音量分别设置，还可以设置优先级，循环次数以及速率
                 // 速率最低0.5最高为2，1代表 正常速度
                 soundPool.play(hitOkSfx1, 1, 1, 0, 0, 1);
+                Intent intent = new Intent();
+                intent.setClass(ShakeService.this, Main.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ShakeService.this.startActivity(intent);
             }
         }, 2000);
     }
 
-    /**
-     * 动画设置
-     */
-    private void setAnim() {
-        Animation operatingAnim = AnimationUtils.loadAnimation(this,R.anim.shark_anim);
-        shark_img.startAnimation(operatingAnim);
-    }
 
     /**
      * 定义振动
@@ -125,11 +85,22 @@ public class ShakeActivity extends Activity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (mShakeListener != null) {
             mShakeListener.stop();
         }
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.v(TAG, "ServiceDemo onBind");
+        return null;
+    }
+    @Override
+    public void onStart(Intent intent, int startId) {
+        Log.v(TAG, "ServiceDemo onStart");
+        super.onStart(intent, startId);
+    }
 }

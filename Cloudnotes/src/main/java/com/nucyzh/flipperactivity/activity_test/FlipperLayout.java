@@ -153,8 +153,7 @@ public class FlipperLayout extends ViewGroup {
         obtainVelocityTracker(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mTouchState = mScroller.isFinished() ? TOUCH_STATE_RESTART
-                        : TOUCH_STATE_SCROLLING;
+                mTouchState = mScroller.isFinished() ? TOUCH_STATE_RESTART : TOUCH_STATE_SCROLLING;
                 if (mTouchState == TOUCH_STATE_SCROLLING) {
                     return false;
                 }

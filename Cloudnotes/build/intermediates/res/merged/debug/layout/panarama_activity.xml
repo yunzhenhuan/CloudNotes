@@ -94,38 +94,6 @@
         android:layout_height="fill_parent"
         android:layout_below="@+id/layout_control"
         android:visibility="gone" >
-
-        <Button
-            android:id="@+id/btn_turn_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="向左" />
-
-        <Button
-            android:id="@+id/btn_turn_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="向右" />
-
-        <Button
-            android:id="@+id/btn_turn_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="向上" />
-
-        <Button
-            android:id="@+id/btn_turn_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="向下" />
     </RelativeLayout>
 
 </RelativeLayout>

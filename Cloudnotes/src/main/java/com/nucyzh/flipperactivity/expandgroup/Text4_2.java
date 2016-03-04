@@ -18,7 +18,7 @@ public class Text4_2 {
 		TextView textView = (TextView)mWikiMsg.findViewById(R.id.text);
 		textView.setText("测试4_2");
 		TextView content = (TextView)mWikiMsg.findViewById(R.id.tv_content);
-		content.setBackgroundColor(Color.RED);
+		content.setBackgroundColor(Color.BLUE);
 	}
 	public View getView() {
 		return mWikiMsg;

@@ -3,6 +3,7 @@ package com.nucyzh.online_chat;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import com.nucyzh.R;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.bmob.v3.BmobRealTimeData;
@@ -52,32 +55,27 @@ public class ChatActivity extends Activity {
                 String name = et_name.getText().toString();
                 String content = et_content.getText().toString();
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(content)) {
-                    Toast.makeText(ChatActivity.this, "用户名和内容不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "The user name and content cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    sendMsg(name, content);
-                    System.out.println("send successful");
+                    sendMsg(name, content,new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) );
                 }
             }
         });
 
         myAdapter = new MyAdapter();
         lv_data.setAdapter(myAdapter);
-
     }
 
-
     private void init() {
-        // Bmob.initialize(this, "c238263866c0f587531c8c406cc47251");
         data.start(this, new ValueEventListener() {
             @Override
             public void onDataChange(JSONObject arg0) {
                 // TODO Auto-generated method stub
                 if (BmobRealTimeData.ACTION_UPDATETABLE.equals(arg0.optString("action"))) {
                     JSONObject data = arg0.optJSONObject("data");
-                    messages.add(new Chat(data.optString("name"), data.optString("content")));
+                    messages.add(new Chat(data.optString("name"), data.optString("content"),data.optString("send_time")));
                     myAdapter.notifyDataSetChanged();
-
                 }
             }
 
@@ -97,19 +95,21 @@ public class ChatActivity extends Activity {
      * @param name
      * @param msg
      */
-    private void sendMsg(String name, String msg) {
-        Chat chat = new Chat("昵称:" + name, "消息:" + msg);
+    private void sendMsg(String name, String msg,String send_time) {
+        Chat chat = new Chat(name + "：", msg,send_time);
         chat.save(this, new SaveListener() {
 
             @Override
             public void onSuccess() {
                 // TODO Auto-generated method stub
                 et_content.setText("");
+                Log.i("sendMsa","successful");
             }
 
             @Override
             public void onFailure(int arg0, String arg1) {
                 // TODO Auto-generated method stub
+                Log.i("sendMsa","faild");
             }
         });
     }
@@ -139,8 +139,8 @@ public class ChatActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             // TODO Auto-generated method stub
             if (convertView == null) {
-                System.out.print("getView");
-                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.online_chat, null);
+                System.out.print("getView看看");
+                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_item, null);
                 holder = new ViewHolder();
                 holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
                 holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
@@ -152,7 +152,7 @@ public class ChatActivity extends Activity {
             Chat chat = messages.get(position);
             holder.tv_name.setText(chat.getName());
             holder.tv_content.setText(chat.getContent());
-            holder.tv_time.setText(chat.getCreatedAt());
+            //holder.tv_time.setText(chat.getCreatedAt());
             return convertView;
         }
 

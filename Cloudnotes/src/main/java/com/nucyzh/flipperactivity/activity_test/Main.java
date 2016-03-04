@@ -1,13 +1,19 @@
 package com.nucyzh.flipperactivity.activity_test;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 
+import com.nucyzh.Sensor.ShakeService;
+import com.nucyzh.Settings.Settings;
 import com.nucyzh.flipperactivity.expandgroup.About;
-
+import com.nucyzh.flipperactivity.expandgroup.LoginAndLogout;
 import com.nucyzh.flipperactivity.expandgroup.Text1_2;
 import com.nucyzh.flipperactivity.expandgroup.Text1_3;
 import com.nucyzh.flipperactivity.expandgroup.Text2_1;
@@ -19,11 +25,12 @@ import com.nucyzh.flipperactivity.expandgroup.Text3_3;
 import com.nucyzh.flipperactivity.expandgroup.Text4_1;
 import com.nucyzh.flipperactivity.expandgroup.Text4_2;
 import com.nucyzh.flipperactivity.expandgroup.Text4_3;
+import com.nucyzh.login_third.LoginActivity;
 import com.nucyzh.notes.NotesActivity;
 
 
 public class Main extends Activity implements FlipperLayout.OnOpenListener {
-
+    private static String TAG = "Main";
     public static final int REQUEST_CODE_ADD_NOTE = 1;
     public static final int REQUEST_CODE_EDIT_NOTE = 2;
     private FlipperLayout mRoot;
@@ -41,6 +48,16 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
     private Text4_1 text10;
     private Text4_2 text11;
     private Text4_3 text12;
+    private LoginAndLogout loginAndLogout;
+    ServiceConnection conn = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.v(TAG, "onServiceConnected");
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            Log.v(TAG, "onServiceDisconnected");
+        }
+    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +68,7 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         text2 = new Text1_2(this);
         text3 = new Text1_3(this);
         text4 = new Text2_1(this);
-        System.out.println("test3");
         text5 = new Text2_2(this);
-        System.out.println("test4");
         text6 = new Text2_3(this);
         text7 = new Text3_1(this);
         text8 = new Text3_2(this);
@@ -61,6 +76,7 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         text10 = new Text4_1(this);
         text11 = new Text4_2(this);
         text12 = new Text4_3(this);
+        loginAndLogout = new LoginAndLogout(this);
         mAbout = new About(this);
 
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
@@ -71,10 +87,8 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
         mDesktop.setOnChangeViewListener(new Desktop.OnChangeViewListener() {
             @Override
             public void onChangeView(int args) {
-                System.out.println("" + args);
                 switch (args) {
                     case 1:
-                        //mRoot.close(text1.getView());
                         Intent intent = new Intent(Main.this, NotesActivity.class);
                         startActivity(intent);
                         break;
@@ -111,17 +125,34 @@ public class Main extends Activity implements FlipperLayout.OnOpenListener {
                     case 12:
                         mRoot.close(text12.getView());
                         break;
+                    case 21:
+                        Intent settings = new Intent(Main.this, Settings.class);
+                        startActivity(settings);
+                        Log.i("Settings", "test2");
+                        break;
+                    case 22:
+                        // mRoot.close(loginAndLogout.getView());
+                        Intent loginAndLogout = new Intent(Main.this, LoginActivity.class);
+                        startActivity(loginAndLogout);
+                        break;
                     default:
                         break;
                 }
             }
 
         });
+        bindService(new Intent(ShakeService.ACTION), conn, BIND_AUTO_CREATE);//启动服务
     }
 
     public void open() {
         if (mRoot.getScreenState() == FlipperLayout.SCREEN_STATE_CLOSE) {
             mRoot.open();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(conn);
+        super.onDestroy();
     }
 }

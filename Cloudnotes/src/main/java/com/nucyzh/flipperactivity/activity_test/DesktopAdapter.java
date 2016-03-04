@@ -108,7 +108,7 @@ public class DesktopAdapter extends BaseExpandableListAdapter {
         }
         holder.mGroupName1.setText(mGroup1.get(groupPosition).get("name").toString());
         holder.mGroupName1.setTextColor(Color.BLUE);
-        convertView.setBackgroundResource(R.drawable.v5_0_1_desktop_list_item);
+        convertView.setBackgroundResource(R.drawable.desktop_list_item);
         return convertView;
     }
 
@@ -135,7 +135,7 @@ public class DesktopAdapter extends BaseExpandableListAdapter {
             holder.mGroupName.setTextColor(Color.WHITE);
             //System.out.println(mGroup.get(groupPosition).get("name").toString());
         }
-        convertView.setBackgroundResource(R.drawable.v5_0_1_desktop_list_item);
+        convertView.setBackgroundResource(R.drawable.desktop_list_item);
         return convertView;
     }
 

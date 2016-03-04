@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.nucyzh.R;
 import com.nucyzh.connect_net.utils.ToastUtil;
@@ -51,11 +50,6 @@ public class NotesSync {
     private NotesDB db;
     private SQLiteDatabase dbRead, dbWrite;
 
-    public NotesSync(String currentPath) {
-        this.currentPath = currentPath;
-        System.out.println(currentPath);
-    }
-
     public NotesSync(Context context, Button upLoad, Button downLoad) {
         this.context = context;
         this.btn_upload = upLoad;
@@ -76,7 +70,6 @@ public class NotesSync {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        System.out.println("点击upload");
                         final ProgressDialog progressDialog = new ProgressDialog(context);
                         progressDialog.setMessage("Uploading。。。");
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -280,10 +273,7 @@ public class NotesSync {
                                             @Override
                                             public void onSuccess(List<Notes> list) {
                                                 for (int i = 0; i < list.size(); i++) {
-                                                    System.out.println("1test");
                                                     Cursor c_test = dbRead.query("notes", new String[]{"_id,name,content,date"}, "_id =?", new String[]{list.get(i).getId()}, null, null, null);
-                                                    //dbRead.rawQuery("select * from notes where _id=?", new String[]{list.get(i).getId()});
-                                                    System.out.println("2teset");
                                                     if (!c_test.moveToNext()) {//如果本地数据库中没有,就插入该条数据
                                                         dbWrite.execSQL("insert into notes values('"
                                                                 + list.get(i).getId() + "','"
@@ -310,10 +300,7 @@ public class NotesSync {
                                             @Override
                                             public void onSuccess(List<Media> list) {
                                                 for (int i = 0; i < list.size(); i++) {
-                                                    System.out.println("1test");
                                                     Cursor c_test = dbRead.query("media", new String[]{"_id,path,note_id"}, "_id =?", new String[]{list.get(i).getId()}, null, null, null);
-                                                    //dbRead.rawQuery("select * from notes where _id=?", new String[]{list.get(i).getId()});
-                                                    System.out.println("2teset");
                                                     if (!c_test.moveToNext()) {//如果本地数据库中没有,就插入该条数据
                                                         dbWrite.execSQL("insert into media values('"
                                                                 + list.get(i).getId() + "','"
@@ -356,33 +343,6 @@ public class NotesSync {
                     + notes.getContent() + "," + notes.getDate() + "\n";
         }
         return msg;
-    }
-
-    /**
-     * 批量插入操作
-     * insertBatch
-     *
-     * @return void
-     * @throws
-     */
-
-    public void insertBatch(List<BmobObject> files) {
-        new BmobObject().insertBatch(context, files, new SaveListener() {
-
-            @Override
-            public void onSuccess() {
-                // TODO Auto-generated method stub
-                System.out.println("批量更新成功");
-                Toast.makeText(context, "批量更新成功", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int arg0, String arg1) {
-                // TODO Auto-generated method stub
-                Toast.makeText(context, "批量更新成败", Toast.LENGTH_SHORT).show();
-                System.out.println("批量更新成败");
-            }
-        });
     }
 
     private class MyAdapter extends BaseAdapter {

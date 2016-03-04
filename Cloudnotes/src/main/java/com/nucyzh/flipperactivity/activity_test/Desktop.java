@@ -1,6 +1,7 @@
 package com.nucyzh.flipperactivity.activity_test;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -30,9 +31,7 @@ public class Desktop {
     private int expandFlag = -1;
     private OnChangeViewListener onChangeViewListener;
     private ExpandableListView desktop_list;
-    private ExpandableListView mDisplay;
     DesktopAdapter adapter;
-    DesktopAdapter adapter2;
     public static int mChooesId = 0;
     public static int mGroupId = 0;
     Context context;
@@ -47,10 +46,8 @@ public class Desktop {
         desktop_list = (ExpandableListView) mDesktop.findViewById(R.id.list);
         init_data();
         desktop_list.setOnGroupClickListener(new OnGroupClickListener() {
-
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 // TODO Auto-generated method stub
                 switch (groupPosition) {
                     case 0:
@@ -129,6 +126,12 @@ public class Desktop {
                             expandFlag = groupPosition;
                         }
                         break;
+                    case 12:
+                        Log.i("Options", "are click");
+                        onChangeViewListener.onChangeView(21);
+                    case 13://Log in/Log out
+                        Log.i("Log in/Log out", "are click");
+                        onChangeViewListener.onChangeView(22);
                     default:
                         break;
                 }
@@ -236,16 +239,16 @@ public class Desktop {
         image_group_chlid[0] = R.drawable.menu_ico_a;
         image_group_chlid[1] = R.drawable.menu_ico_b;
         image_group_chlid[2] = R.drawable.menu_ico_c;
-        mChildFavoriteIcon[0] = R.drawable.v5_0_1_desktop_list_newsfeed;
-        mChildFavoriteIcon[1] = R.drawable.v5_0_1_desktop_list_message;
-        mChildFavoriteIcon[2] = R.drawable.v5_0_1_desktop_list_chat;
-        mChildFavoriteIcon[3] = R.drawable.v5_0_1_desktop_list_friends;
-        mChildFavoriteIcon[4] = R.drawable.v5_0_1_desktop_list_page;
-        mChildFavoriteIcon[5] = R.drawable.v5_0_1_desktop_list_location;
-        mChildFavoriteIcon[6] = R.drawable.v5_0_1_desktop_list_search;
-        mChildFavoriteIcon[7] = R.drawable.v5_0_1_desktop_list_apps_center;
-        mChildActionIcon[0] = R.drawable.v5_0_1_desktop_list_settings;
-        mChildActionIcon[1] = R.drawable.v5_0_1_desktop_list_log_out;
+        mChildFavoriteIcon[0] = R.drawable.desktop_list_newsfeed;
+        mChildFavoriteIcon[1] = R.drawable.desktop_list_message;
+        mChildFavoriteIcon[2] = R.drawable.desktop_list_chat;
+        mChildFavoriteIcon[3] = R.drawable.desktop_list_friends;
+        mChildFavoriteIcon[4] = R.drawable.desktop_list_page;
+        mChildFavoriteIcon[5] = R.drawable.desktop_list_location;
+        mChildFavoriteIcon[6] = R.drawable.desktop_list_search;
+        mChildFavoriteIcon[7] = R.drawable.desktop_list_apps_center;
+        mChildActionIcon[0] = R.drawable.desktop_list_settings;
+        mChildActionIcon[1] = R.drawable.desktop_list_log_out;
 
         for (int i = 0; i < mGroupName.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
@@ -261,7 +264,6 @@ public class Desktop {
         }
         Map<String, Object> map_oprate = new HashMap<String, Object>();
         map_oprate.put("name", mGroupName2[1]);
-        //map_oprate.put("click", true);
         mGroup1.add(map_oprate);
         for (int i = 0; i < mGroupName2.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
@@ -287,11 +289,11 @@ public class Desktop {
         map2.put("click", false);
         mChild1.get(0).set(0, map2);
 
-        adapter = new DesktopAdapter(context,mGroup1,mGroup, mChild1);
+        adapter = new DesktopAdapter(context, mGroup1, mGroup, mChild1);
         desktop_list.setAdapter(adapter);
         // 默认打开第一个闭合其他的
         for (int i = 0; i < desktop_list.getChildCount(); i++) {
-            //   desktop_list.collapseGroup(i);
+            desktop_list.collapseGroup(i);
         }
     }
 
